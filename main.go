@@ -15,6 +15,7 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	mux.Handle("/tasks", http.HandlerFunc(handlers.CreateTask))
+	mux.Handle("/tasks", http.HandlerFunc(handlers.EditTask))
 	fmt.Println("Server running on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
