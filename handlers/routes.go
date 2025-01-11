@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/michaelchristwin/taskmanager/db"
@@ -65,7 +66,13 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditTask(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	path := strings.Trim(r.URL.Path, "/")
+	parts := strings.Split(path, "/")
+	if len(parts) < 2 {
+		http.Error(w, "Invalid path", http.StatusBadRequest)
+		return
+	}
+	id := parts[len(parts)-1]
 	if r.Method != http.MethodPut {
 		log.Printf("Invalid request method")
 		http.Error(w, "Invalid request", http.StatusMethodNotAllowed)
