@@ -66,6 +66,11 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditTask(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		log.Printf("Invalid request method")
+		http.Error(w, "Invalid request", http.StatusMethodNotAllowed)
+		return
+	}
 	path := strings.Trim(r.URL.Path, "/")
 	parts := strings.Split(path, "/")
 	if len(parts) < 2 {
@@ -73,9 +78,9 @@ func EditTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id := parts[len(parts)-1]
-	if r.Method != http.MethodPut {
-		log.Printf("Invalid request method")
-		http.Error(w, "Invalid request", http.StatusMethodNotAllowed)
+	if id == "" {
+		log.Printf("Empty task ID")
+		http.Error(w, "Invalid task ID", http.StatusBadRequest)
 		return
 	}
 
@@ -87,7 +92,7 @@ func EditTask(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	query := "SELECT id, title, description, due_date, priority, completed, created_at, updated_at FROM tasks WHERE id = ?"
+	query := "SELECT id, title, description, due_date, priority, completed, created_at, updated_at FROM tasks WHERE id = $1"
 	var existingTask Task
 	row := db.Db.QueryRow(r.Context(), query, id)
 	if err := row.Scan(&existingTask.ID, &existingTask.Title, &existingTask.Description, &existingTask.Due_Date, &existingTask.Priority, &existingTask.Completed, &existingTask.CreatedAt, &existingTask.UpdatedAt); err != nil {
@@ -122,4 +127,35 @@ func EditTask(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
 	}
+}
+
+func DeleteTask(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		log.Printf("Invalid request method")
+		http.Error(w, "Invalid request", http.StatusMethodNotAllowed)
+		return
+	}
+	path := strings.Trim(r.URL.Path, "/")
+	parts := strings.Split(path, "/")
+	if len(parts) < 2 {
+		http.Error(w, "Invalid path", http.StatusBadRequest)
+		return
+	}
+	id := parts[len(parts)-1]
+	if id == "" {
+		log.Printf("Empty task ID")
+		http.Error(w, "Invalid task ID", http.StatusBadRequest)
+		return
+	}
+
+	query := "DELETE FROM tasks WHERE id = $1"
+	_, err := db.Db.Exec(r.Context(), query, id)
+	if err != nil {
+		log.Printf("Failed to delete task: %v", err)
+		http.Error(w, "Failed to delete task", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
 }
