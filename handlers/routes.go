@@ -159,3 +159,79 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func GetTask(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		log.Printf("Invalid request method")
+		http.Error(w, "Invalid request", http.StatusMethodNotAllowed)
+		return
+	}
+	path := strings.Trim(r.URL.Path, "/")
+	parts := strings.Split(path, "/")
+	if len(parts) < 2 {
+		http.Error(w, "Invalid path", http.StatusBadRequest)
+		return
+	}
+	id := parts[len(parts)-1]
+	if id == "" {
+		log.Printf("Empty task ID")
+		http.Error(w, "Invalid task ID", http.StatusBadRequest)
+		return
+	}
+	var task Task
+	query := "SELECT id, title, description, due_date, priority, completed, created_at, updated_at FROM tasks WHERE id = $1"
+	row := db.Db.QueryRow(r.Context(), query, id)
+	if err := row.Scan(&task.ID, &task.Title, &task.Description, &task.Due_Date, &task.Priority, &task.Completed, &task.CreatedAt, &task.UpdatedAt); err != nil {
+		log.Printf("Failed to find task: %v", err)
+		http.Error(w, "Task not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(task); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
+}
+
+func GetTasks(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		log.Printf("Invalid request method")
+		http.Error(w, "Invalid request", http.StatusMethodNotAllowed)
+		return
+	}
+
+	query := "SELECT id, title, description, due_date, priority, completed, created_at, updated_at FROM tasks"
+	rows, err := db.Db.Query(r.Context(), query)
+	if err != nil {
+		log.Printf("Failed to retrieve tasks: %v", err)
+		http.Error(w, "Failed to retrieve tasks", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var tasks []Task
+	for rows.Next() {
+		var task Task
+		if err := rows.Scan(&task.ID, &task.Title, &task.Description, &task.Due_Date, &task.Priority, &task.Completed, &task.CreatedAt, &task.UpdatedAt); err != nil {
+			log.Printf("Failed to scan task: %v", err)
+			http.Error(w, "Failed to retrieve tasks", http.StatusInternalServerError)
+			return
+		}
+		tasks = append(tasks, task)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Printf("Error iterating rows: %v", err)
+		http.Error(w, "Failed to retrieve tasks", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(tasks); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
+}
