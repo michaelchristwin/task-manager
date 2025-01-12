@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/michaelchristwin/taskmanager/db"
 )
 
@@ -71,13 +71,8 @@ func EditTask(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request", http.StatusMethodNotAllowed)
 		return
 	}
-	path := strings.Trim(r.URL.Path, "/")
-	parts := strings.Split(path, "/")
-	if len(parts) < 2 {
-		http.Error(w, "Invalid path", http.StatusBadRequest)
-		return
-	}
-	id := parts[len(parts)-1]
+	vars := mux.Vars(r)
+	id := vars["id"]
 	if id == "" {
 		log.Printf("Empty task ID")
 		http.Error(w, "Invalid task ID", http.StatusBadRequest)
@@ -135,13 +130,8 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request", http.StatusMethodNotAllowed)
 		return
 	}
-	path := strings.Trim(r.URL.Path, "/")
-	parts := strings.Split(path, "/")
-	if len(parts) < 2 {
-		http.Error(w, "Invalid path", http.StatusBadRequest)
-		return
-	}
-	id := parts[len(parts)-1]
+	vars := mux.Vars(r)
+	id := vars["id"]
 	if id == "" {
 		log.Printf("Empty task ID")
 		http.Error(w, "Invalid task ID", http.StatusBadRequest)
@@ -166,13 +156,8 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request", http.StatusMethodNotAllowed)
 		return
 	}
-	path := strings.Trim(r.URL.Path, "/")
-	parts := strings.Split(path, "/")
-	if len(parts) < 2 {
-		http.Error(w, "Invalid path", http.StatusBadRequest)
-		return
-	}
-	id := parts[len(parts)-1]
+	vars := mux.Vars(r)
+	id := vars["id"]
 	if id == "" {
 		log.Printf("Empty task ID")
 		http.Error(w, "Invalid task ID", http.StatusBadRequest)
@@ -233,5 +218,37 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed to encode response: %v", err)
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
+	}
+}
+
+func TaskHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	switch r.Method {
+	case http.MethodGet:
+		if id == "" {
+			GetTasks(w, r)
+		} else {
+			GetTask(w, r)
+		}
+	case http.MethodPut:
+		if id == "" {
+			log.Printf("Empty task ID")
+			http.Error(w, "Invalid task ID", http.StatusBadRequest)
+		} else {
+			EditTask(w, r)
+		}
+	case http.MethodDelete:
+		if id == "" {
+			log.Printf("Empty task ID")
+			http.Error(w, "Invalid task ID", http.StatusBadRequest)
+		} else {
+			DeleteTask(w, r)
+		}
+	case http.MethodPost:
+		CreateTask(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
