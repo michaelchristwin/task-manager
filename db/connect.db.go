@@ -19,7 +19,12 @@ func Connect() error {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	Db, err = pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	DB_USER := os.Getenv("DB_USER")
+	DB_PASSWORD := os.Getenv("DB_PASSWORD")
+	DB_HOST := os.Getenv("DB_HOST")
+	DB_NAME := os.Getenv("DB_NAME")
+	database_url := fmt.Sprintf("postgresql://%s:%s@%s/%s", DB_USER, DB_PASSWORD, DB_HOST, DB_NAME)
+	Db, err = pgxpool.New(context.Background(), database_url)
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 		return fmt.Errorf("Failed to connect to the database: %w", err)
