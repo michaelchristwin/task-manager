@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -19,6 +20,22 @@ type Task struct {
 	Completed   bool      `json:"completed"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("HomeHandler called: %s %s", r.Method, r.URL.Path)
+	if r.Method != http.MethodGet {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html")
+	content, err := os.ReadFile("frontend/index.html")
+	if err != nil {
+		log.Printf("Error reading index.html: %v", err)
+		http.Error(w, "Could not load page", http.StatusInternalServerError)
+		return
+	}
+	w.Write(content)
 }
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
