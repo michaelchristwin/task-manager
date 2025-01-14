@@ -5,12 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Task Manager</title>
     <link rel="stylesheet" type="text/css" href="/static/style.css" />
+    <link href="/static/styles/output.css" type="text/css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
     <script src="/static/htmx.min.js" async></script>
   </head>
-  <body>
+  <body class="quicksand">
     <header>
       <nav class="navbar">
-        <a href="/" class="brand">tm</a>
+        <a href="/" class="brand">TM</a>
         <ul class="nav-links">
           <li><a href="/tasks">Tasks</a></li>
           <li><a href="/about">About</a></li>
@@ -19,6 +26,12 @@
     </header>
     <main>
       <p>This is SSR with go baby :)</p>
+      <p class="text-blue-500">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Autem
+        laboriosam in rem, ab exercitationem iure voluptatem minus quos,
+        consequatur ipsam quasi optio repellendus. Rem laudantium delectus earum
+        dolor doloribus esse!
+      </p>
     </main>
   </body>
 </html>
