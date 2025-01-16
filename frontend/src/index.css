@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background-rgb: 32, 33, 36;
+  --foreground-rgb: 255, 255, 255;
+  --primary-rgb: 255, 255, 0;
+  --text-rgb: 255, 255, 255;
+}
+@layer base {
+  :root {
+    --background-rgb: 32 33 36;
+    --foreground-rgb: 255 255 255;
+    --primary-rgb: 255 255 0;
+  }
+}
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: rgb(var(--background-rgb));
+  color: rgb(var(--text-rgb));
+  font-family: "Quicksand", serif;
+  font-optical-sizing: auto;
+  padding: 20px 20px;
+}
