@@ -17,11 +17,11 @@ const Layout: ParentComponent = (props) => {
 const routes = [
   {
     path: "/",
-    component: lazy(() => import("./routes/Index")),
+    component: lazy(() => import("./routes")),
   },
   {
     path: "/tasks",
-    component: lazy(() => import("./routes/Tasks")),
+    component: lazy(() => import("./routes/tasks")),
   },
 ];
 const root = document.getElementById("root");
