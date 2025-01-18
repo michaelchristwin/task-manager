@@ -1,6 +1,7 @@
-import { Component, createEffect, createSignal, Setter, Show } from "solid-js";
+import { Component, createSignal, Show } from "solid-js";
 import Task from "../components/Task";
-import { AiFillCloseCircle } from "solid-icons/ai";
+import AddTaskDialog from "../components/AddTask";
+
 import { IoAddCircleOutline } from "solid-icons/io";
 
 const Tasks: Component = () => {
@@ -40,34 +41,3 @@ const Tasks: Component = () => {
   );
 };
 export default Tasks;
-
-interface AddTaskDialogProps {
-  setIsOpen: Setter<boolean>;
-}
-const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
-  const closeModal = () => props.setIsOpen(false);
-  createEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeModal();
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-  });
-  return (
-    <div
-      aria-label="modal"
-      class={`fixed top-[50%] z-20 right-[50%] translate-x-[50%] translate-y-[-50%] bg-neutral-800 lg:w-[600px] lg:h-[600px] md:w-[500px] md:h-[500px] w-[300px] h-[300px] rounded`}
-    >
-      <div class={`w-full h-full relative`}>
-        <button
-          aria-label="close modal"
-          class={`rounded-full absolute top-[30px] right-[30px]`}
-          onclick={closeModal}
-        >
-          <AiFillCloseCircle size={25} />
-        </button>
-      </div>
-    </div>
-  );
-};
