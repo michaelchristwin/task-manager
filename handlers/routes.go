@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -22,16 +24,35 @@ type Task struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("HomeHandler called: %s %s", r.Method, r.URL.Path)
+func ClientHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("ClientHandler called: %s %s", r.Method, r.URL.Path)
 	if r.Method != http.MethodGet {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
-	w.Header().Set("Content-Type", "text/html")
-	content, err := os.ReadFile("frontend/index.html")
+
+	// Set correct MIME type based on file extension
+	if strings.HasSuffix(r.URL.Path, ".js") {
+		w.Header().Set("Content-Type", "application/javascript")
+	} else if strings.HasSuffix(r.URL.Path, ".css") {
+		w.Header().Set("Content-Type", "text/css")
+	} else {
+		w.Header().Set("Content-Type", "text/html")
+	}
+
+	path := "frontend/dist/index.html"
+
+	// Only serve index.html for root path or non-existent files
+	if r.URL.Path != "/" {
+		path = filepath.Join("frontend/dist", r.URL.Path)
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			path = "frontend/dist/index.html"
+		}
+	}
+
+	content, err := os.ReadFile(path)
 	if err != nil {
-		log.Printf("Error reading index.html: %v", err)
+		log.Printf("Error reading file %s: %v", path, err)
 		http.Error(w, "Could not load page", http.StatusInternalServerError)
 		return
 	}
