@@ -4,9 +4,25 @@ import { Component, createEffect, createSignal, For, Setter } from "solid-js";
 interface AddTaskDialogProps {
   setIsOpen: Setter<boolean>;
 }
+
+interface FormState {
+  title: string;
+  description: string;
+  due_date: string;
+  priority: "Low" | "Medium" | "High";
+}
+
 const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
   const closeModal = () => props.setIsOpen(false);
-  const [activePriority, setActivePriority] = createSignal<string>("Low");
+
+  const now = new Date();
+  const formattedNow = now.toISOString().slice(0, 16);
+  const [formState, setFormState] = createSignal<FormState>({
+    title: "",
+    description: "",
+    due_date: formattedNow,
+    priority: "Low",
+  });
   createEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -31,7 +47,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
         >
           <AiFillCloseCircle size={25} />
         </button>
-        <form action="" class={`w-[80%] space-y-4 mt-[100px]`}>
+        <form action="" class={`w-[80%] space-y-4 mt-[80px]`}>
           <h2 class={`text-[25px] font-bold text-primary`}>Add Task</h2>
           <fieldset class={`space-y-1 w-full`}>
             <label for="title">Title</label>
@@ -39,6 +55,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
               type="text"
               name="title"
               id="title"
+              value={formState().title}
               class={`w-full outline-none h-[40px] rounded text-neutral-800 ps-2`}
             />
           </fieldset>
@@ -48,6 +65,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
               type="text"
               name="description"
               id="description"
+              value={formState().description}
               class={`w-full outline-none h-[40px] rounded text-neutral-800 ps-2`}
             />
           </fieldset>
@@ -61,11 +79,16 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
                   <button
                     type="button"
                     class={`px-4 py-2 rounded-[10px] border border-white/10 ${
-                      activePriority() === priority
+                      formState().priority === priority
                         ? "ring-2 ring-blue-500"
                         : ""
                     }`}
-                    onclick={() => setActivePriority(priority)}
+                    onclick={() =>
+                      setFormState((prev) => ({
+                        ...prev,
+                        priority: priority as "Low" | "Medium" | "High",
+                      }))
+                    }
                   >
                     {priority}
                   </button>
@@ -78,7 +101,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
             <input
               type="datetime-local"
               name="due_date"
-              min={`2018-06-07T00:00`}
+              value={formState().due_date}
               id="due_date"
               class={`w-full outline-none h-[40px] rounded text-neutral-800`}
             />
