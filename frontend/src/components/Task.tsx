@@ -1,7 +1,15 @@
 import { Component } from "solid-js";
 import { AiOutlineCalendar } from "solid-icons/ai";
 
-const Task: Component = () => {
+export interface TaskProps {
+  title: string;
+  completed: boolean;
+  due_date: string;
+}
+
+const Task: Component<TaskProps> = (props) => {
+  const date = new Date(props.due_date);
+  const formattedDate = date.toISOString().slice(0, 10);
   return (
     <div
       class={`flex w-full justify-items-start items-center p-5 space-x-4 h-[100px]`}
@@ -13,10 +21,10 @@ const Task: Component = () => {
         class={`w-[20px] h-[20px] outline-none border border-gray-300 rounded-full`}
       />
       <div class={`flex flex-col`}>
-        <p class={`text-[19px]`}>Buy bread from the cornerstore</p>
+        <p class={`text-[19px]`}>{props.title}</p>
         <div class={`flex items-center space-x-2`}>
           <AiOutlineCalendar size={18} />
-          <p class={`text-[14px]`}>2025-01-17</p>
+          <p class={`text-[14px]`}>{formattedDate}</p>
         </div>
       </div>
     </div>

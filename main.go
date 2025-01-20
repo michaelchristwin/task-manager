@@ -35,8 +35,11 @@ func main() {
 	mux.HandleFunc("/", handlers.ClientHandler)
 	mux.HandleFunc("/api/tasks", handlers.TaskHandler)
 	mux.HandleFunc("/api/tasks/{id}", handlers.TaskHandler)
+	corsConfig := handlers.DefaultCORSConfig()
+	corsConfig.AllowedOrigins = []string{"http://localhost:8080", "http://localhost:3000"}
+	corsHandler := handlers.CORSMiddleware(corsConfig)
 	fmt.Println("Server running on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(":8080", corsHandler(mux)); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }

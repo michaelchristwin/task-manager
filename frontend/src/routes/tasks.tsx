@@ -1,11 +1,25 @@
-import { Component, createSignal, Show } from "solid-js";
-import Task from "../components/Task";
+import {
+  Component,
+  createResource,
+  createSignal,
+  Show,
+  Switch,
+  Match,
+  For,
+} from "solid-js";
+import Task, { TaskProps } from "../components/Task";
 import AddTaskDialog from "../components/AddTask";
-
 import { IoAddCircleOutline } from "solid-icons/io";
+
+const fetchTasks = async () => {
+  const response = await fetch("http://localhost:8080/api/tasks");
+  return response.json();
+};
 
 const Tasks: Component = () => {
   const [isOpen, setIsOpen] = createSignal(false);
+  const [tasks] = createResource(fetchTasks);
+  console.log(tasks());
   return (
     <div class={`w-full relative`}>
       <Show when={isOpen()}>
@@ -33,9 +47,14 @@ const Tasks: Component = () => {
       <div
         class={`lg:w-[900px] md:w-[600px] w-full bg-[#292a2d] h-[600px] mx-auto mt-[70px] rounded-lg shadow-lg p-3 divide-y divide-white/5`}
       >
-        <Task />
-        <Task />
-        <Task />
+        <Switch>
+          <Match when={tasks.error}>
+            <span>Error: {tasks.error}</span>
+          </Match>
+          <Match when={tasks()}>
+            <For each={tasks()}>{(task) => <Task {...task} />}</For>
+          </Match>
+        </Switch>
       </div>
     </div>
   );
