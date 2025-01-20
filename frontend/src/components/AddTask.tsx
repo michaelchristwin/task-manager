@@ -73,6 +73,16 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
               </For>
             </div>
           </div>
+          <fieldset class={`space-y-1 w-full`}>
+            <label for="due date">Due Date</label>
+            <input
+              type="datetime-local"
+              name="due_date"
+              min={`2018-06-07T00:00`}
+              id="due_date"
+              class={`w-full outline-none h-[40px] rounded text-neutral-800`}
+            />
+          </fieldset>
           <button
             type="submit"
             class={`w-[100px] h-[40px] flex justify-center items-center rounded-[8px] bg-primary text-neutral-800 mx-auto`}
