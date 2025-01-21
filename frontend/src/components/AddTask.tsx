@@ -17,6 +17,21 @@ function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+function areAllPropertiesTruthy(obj: { [key: string]: any }): boolean {
+  // Iterate over each property in the object
+  for (let key in obj) {
+    // Check if the property is directly on the object (not inherited)
+    if (obj.hasOwnProperty(key)) {
+      // If any property is falsy, return false
+      if (!obj[key]) {
+        return false;
+      }
+    }
+  }
+  // If all properties are truthy, return true
+  return true;
+}
+
 const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
   const priorities = () => ["low", "medium", "high"];
   const closeModal = () => props.setIsOpen(false);
@@ -41,6 +56,13 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
   });
 
   const [isLoading, setIsLoading] = createSignal(false);
+
+  const handleChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const name = target.name;
+    const value = target.value;
+    setFormState((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
@@ -95,6 +117,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
               type="text"
               name="title"
               id="title"
+              onchange={handleChange}
               value={formState().title}
               class={`w-full outline-none h-[40px] rounded text-neutral-800 ps-2`}
             />
@@ -106,6 +129,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
               name="description"
               id="description"
               value={formState().description}
+              onchange={handleChange}
               class={`w-full outline-none h-[40px] rounded text-neutral-800 ps-2`}
             />
           </fieldset>
@@ -142,14 +166,16 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
             <input
               type="datetime-local"
               name="due_date"
+              onchange={handleChange}
               value={formState().due_date}
               id="due_date"
               class={`w-full outline-none h-[40px] rounded text-neutral-800`}
             />
           </fieldset>
           <button
+            disabled={!areAllPropertiesTruthy(formState())}
             type="submit"
-            class={`add-task-btn rounded-[8px] bg-primary text-neutral-800 mx-auto p-2`}
+            class={`add-task-btn rounded-[8px] bg-primary text-neutral-800 mx-auto p-2 disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <span
               class={`add-task mx-auto ${
