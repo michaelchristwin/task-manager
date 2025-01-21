@@ -25,3 +25,13 @@ body {
   font-optical-sizing: auto;
   padding: 20px 20px;
 }
+.add-task-btn {
+  display: grid;
+  grid-template-areas: "stack";
+}
+.add-task {
+  grid-area: stack;
+}
+.spinner {
+  grid-area: stack;
+}

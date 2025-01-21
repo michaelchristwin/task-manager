@@ -1,4 +1,5 @@
 import { AiFillCloseCircle } from "solid-icons/ai";
+import { ImSpinner2 } from "solid-icons/im";
 import { Component, createEffect, createSignal, For, Setter } from "solid-js";
 
 interface AddTaskDialogProps {
@@ -9,20 +10,27 @@ interface FormState {
   title: string;
   description: string;
   due_date: string;
-  priority: "Low" | "Medium" | "High";
+  priority: "low" | "medium" | "high";
+}
+
+function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
+  const priorities = () => ["low", "medium", "high"];
   const closeModal = () => props.setIsOpen(false);
 
   const now = new Date();
   const formattedNow = now.toISOString().slice(0, 16);
+
   const [formState, setFormState] = createSignal<FormState>({
     title: "",
     description: "",
     due_date: formattedNow,
-    priority: "Low",
+    priority: "low",
   });
+
   createEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -32,7 +40,35 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
     document.addEventListener("keydown", handleKeyDown);
   });
 
-  const priorities = () => ["Low", "Medium", "High"];
+  const [isLoading, setIsLoading] = createSignal(false);
+
+  const handleSubmit = async (e: SubmitEvent) => {
+    e.preventDefault();
+    setIsLoading(true); // Set loading to true when starting
+
+    const data = {
+      title: formState().title,
+      description: formState().description,
+      due_date: formState().due_date,
+      priority: formState().priority,
+    };
+
+    try {
+      await fetch("http://localhost:8080/api/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      props.setIsOpen(false);
+    } catch (error) {
+      // Handle error if needed
+      console.error("Failed to submit:", error);
+    } finally {
+      setIsLoading(false); // Reset loading state whether successful or not
+    }
+  };
 
   return (
     <div
@@ -47,7 +83,11 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
         >
           <AiFillCloseCircle size={25} />
         </button>
-        <form action="" class={`w-[80%] space-y-4 mt-[80px]`}>
+        <form
+          action=""
+          class={`w-[80%] space-y-4 mt-[80px]`}
+          onsubmit={handleSubmit}
+        >
           <h2 class={`text-[25px] font-bold text-primary`}>Add Task</h2>
           <fieldset class={`space-y-1 w-full`}>
             <label for="title">Title</label>
@@ -78,6 +118,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
                 {(priority) => (
                   <button
                     type="button"
+                    name="priority"
                     class={`px-4 py-2 rounded-[10px] border border-white/10 ${
                       formState().priority === priority
                         ? "ring-2 ring-blue-500"
@@ -86,11 +127,11 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
                     onclick={() =>
                       setFormState((prev) => ({
                         ...prev,
-                        priority: priority as "Low" | "Medium" | "High",
+                        priority: priority as "low" | "medium" | "high",
                       }))
                     }
                   >
-                    {priority}
+                    {capitalize(priority)}
                   </button>
                 )}
               </For>
@@ -108,9 +149,26 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
           </fieldset>
           <button
             type="submit"
-            class={`w-[100px] h-[40px] flex justify-center items-center rounded-[8px] bg-primary text-neutral-800 mx-auto`}
+            class={`add-task-btn rounded-[8px] bg-primary text-neutral-800 mx-auto p-2`}
           >
-            Add
+            <span
+              class={`add-task mx-auto ${
+                isLoading() ? "invisible" : "visible"
+              }`}
+            >
+              Add Task
+            </span>
+            <span
+              class={`spinner flex ${
+                isLoading() ? "visible" : "invisible"
+              } items-center justify-center space-x-1`}
+            >
+              Adding Task
+              <ImSpinner2
+                class={`animate-spin mx-auto text-neutral-900`}
+                size={20}
+              />
+            </span>
           </button>
         </form>
       </div>

@@ -7,7 +7,7 @@ import {
   Match,
   For,
 } from "solid-js";
-import Task, { TaskProps } from "../components/Task";
+import Task from "../components/Task";
 import AddTaskDialog from "../components/AddTask";
 import { IoAddCircleOutline } from "solid-icons/io";
 
@@ -20,6 +20,7 @@ const Tasks: Component = () => {
   const [isOpen, setIsOpen] = createSignal(false);
   const [tasks] = createResource(fetchTasks);
   console.log(tasks());
+
   return (
     <div class={`w-full relative`}>
       <Show when={isOpen()}>
