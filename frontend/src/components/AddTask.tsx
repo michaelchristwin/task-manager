@@ -1,6 +1,9 @@
 import { AiFillCloseCircle } from "solid-icons/ai";
 import { ImSpinner2 } from "solid-icons/im";
 import { Component, createEffect, createSignal, For, Setter } from "solid-js";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 interface AddTaskDialogProps {
   setIsOpen: Setter<boolean>;
@@ -36,13 +39,12 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
   const priorities = () => ["low", "medium", "high"];
   const closeModal = () => props.setIsOpen(false);
 
-  const now = new Date();
-  const formattedNow = now.toISOString().slice(0, 16);
+  const formattedNow = dayjs().format("YYYY-MM-DDTHH:mm");
 
   const [formState, setFormState] = createSignal<FormState>({
     title: "",
     description: "",
-    due_date: formattedNow,
+    due_date: "",
     priority: "low",
   });
 
@@ -71,7 +73,12 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
     const data = {
       title: formState().title,
       description: formState().description,
-      due_date: formState().due_date,
+      due_date:
+        dayjs(formState().due_date).format("YYYY-MM-DDTHH:mm:ss") +
+        "." +
+        (dayjs(formattedNow).millisecond() * 1000).toString().padStart(6, "0") +
+        dayjs(formattedNow).format("Z"),
+
       priority: formState().priority,
     };
 
@@ -167,6 +174,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
               type="datetime-local"
               name="due_date"
               onchange={handleChange}
+              min={formattedNow}
               value={formState().due_date}
               id="due_date"
               class={`w-full outline-none h-[40px] rounded text-neutral-800`}
