@@ -4,6 +4,8 @@ import { Component, createEffect, createSignal, For, Setter } from "solid-js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { Priority } from "./Task";
+import AddedToast from "./AddedToast";
 
 interface AddTaskDialogProps {
   setIsOpen: Setter<boolean>;
@@ -13,7 +15,7 @@ interface FormState {
   title: string;
   description: string;
   due_date: string;
-  priority: "low" | "medium" | "high";
+  priority: Priority;
 }
 
 function capitalize(str: string) {
@@ -34,6 +36,9 @@ function areAllPropertiesTruthy(obj: { [key: string]: any }): boolean {
   // If all properties are truthy, return true
   return true;
 }
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
   const priorities = () => ["low", "medium", "high"];
@@ -91,6 +96,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
         body: JSON.stringify(data),
       });
       props.setIsOpen(false);
+      AddedToast();
     } catch (error) {
       // Handle error if needed
       console.error("Failed to submit:", error);

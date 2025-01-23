@@ -2,12 +2,14 @@
 import { lazy, ParentComponent } from "solid-js";
 import { render } from "solid-js/web";
 import { Router } from "@solidjs/router";
+import { Toaster } from "solid-toast";
 import "./index.css";
 import Navbar from "./components/Navbar";
 
 const Layout: ParentComponent = (props) => {
   return (
     <div>
+      <Toaster />
       <Navbar />
       {props.children}
     </div>
