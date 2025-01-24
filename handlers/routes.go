@@ -262,7 +262,7 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 func TaskHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-
+	log.Printf("Extracted ID: %s", id) // Debugging
 	switch r.Method {
 	case http.MethodGet:
 		if id == "" {

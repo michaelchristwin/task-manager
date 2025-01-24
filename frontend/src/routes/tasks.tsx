@@ -18,7 +18,7 @@ const fetchTasks = async () => {
 
 const Tasks: Component = () => {
   const [isOpen, setIsOpen] = createSignal(false);
-  const [tasks] = createResource(fetchTasks);
+  const [tasks, { refetch }] = createResource(fetchTasks);
   console.log(tasks());
 
   return (
@@ -53,7 +53,9 @@ const Tasks: Component = () => {
             <span>Error: {tasks.error}</span>
           </Match>
           <Match when={tasks()}>
-            <For each={tasks()}>{(task) => <Task {...task} />}</For>
+            <For each={tasks()}>
+              {(task) => <Task {...task} refetch={refetch} />}
+            </For>
           </Match>
         </Switch>
       </div>

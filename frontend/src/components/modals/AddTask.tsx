@@ -6,7 +6,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { Priority } from "../Task";
 import { AddedToast } from "~/components/custom.toasts";
-import { reload } from "@solidjs/router";
+import { useNavigate } from "@solidjs/router";
 import { capitalize, areAllPropertiesTruthy } from "~/utils";
 
 interface AddTaskDialogProps {
@@ -53,6 +53,13 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
+  const navigate = useNavigate();
+
+  const handleReload = () => {
+    // Navigate to the current route to trigger a re-render
+    navigate(window.location.pathname, { replace: true });
+  };
+
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     setIsLoading(true); // Set loading to true when starting
@@ -79,7 +86,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
       });
       props.setIsOpen(false);
       AddedToast();
-      reload();
+      handleReload();
     } catch (error) {
       // Handle error if needed
       console.error("Failed to submit:", error);

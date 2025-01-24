@@ -6,7 +6,6 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { Priority, TaskProps } from "~/components/Task";
 import { EditedToast } from "~/components/custom.toasts";
-import { reload } from "@solidjs/router";
 import { capitalize, areAllPropertiesTruthy } from "~/utils";
 
 interface EditTaskDialogProps extends TaskProps {
@@ -80,7 +79,7 @@ const EditTaskDialog: Component<EditTaskDialogProps> = (props) => {
       });
       props.setIsOpen(false);
       EditedToast();
-      reload();
+      props.refetch();
     } catch (error) {
       // Handle error if needed
       console.error("Failed to submit:", error);
@@ -180,14 +179,14 @@ const EditTaskDialog: Component<EditTaskDialogProps> = (props) => {
                 isLoading() ? "invisible" : "visible"
               }`}
             >
-              Add Task
+              Edit Task
             </span>
             <span
               class={`spinner flex ${
                 isLoading() ? "visible" : "invisible"
               } items-center justify-center space-x-1`}
             >
-              Adding Task
+              Editing Task
               <ImSpinner2
                 class={`animate-spin mx-auto text-neutral-900`}
                 size={20}

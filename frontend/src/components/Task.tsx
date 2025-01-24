@@ -12,6 +12,7 @@ export interface TaskProps {
   completed: boolean;
   due_date: string;
   priority: Priority;
+  refetch: () => any;
 }
 
 const Task: Component<TaskProps> = (props) => {
