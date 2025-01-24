@@ -4,13 +4,14 @@ import { Component, createEffect, createSignal, For, Setter } from "solid-js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { Priority } from "./Task";
-import AddedToast from "./AddedToast";
+import { Priority, TaskProps } from "~/components/Task";
+import { EditedToast } from "~/components/custom.toasts";
+import { reload } from "@solidjs/router";
+import { capitalize, areAllPropertiesTruthy } from "~/utils";
 
-interface AddTaskDialogProps {
+interface EditTaskDialogProps extends TaskProps {
   setIsOpen: Setter<boolean>;
 }
-
 interface FormState {
   title: string;
   description: string;
@@ -18,39 +19,21 @@ interface FormState {
   priority: Priority;
 }
 
-function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function areAllPropertiesTruthy(obj: { [key: string]: any }): boolean {
-  // Iterate over each property in the object
-  for (let key in obj) {
-    // Check if the property is directly on the object (not inherited)
-    if (obj.hasOwnProperty(key)) {
-      // If any property is falsy, return false
-      if (!obj[key]) {
-        return false;
-      }
-    }
-  }
-  // If all properties are truthy, return true
-  return true;
-}
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
+//Add Task Component
+const EditTaskDialog: Component<EditTaskDialogProps> = (props) => {
   const priorities = () => ["low", "medium", "high"];
   const closeModal = () => props.setIsOpen(false);
 
   const formattedNow = dayjs().format("YYYY-MM-DDTHH:mm");
 
   const [formState, setFormState] = createSignal<FormState>({
-    title: "",
-    description: "",
-    due_date: "",
-    priority: "low",
+    title: props.title,
+    description: props.description,
+    due_date: dayjs(props.due_date).format("YYYY-MM-DDTHH:mm"),
+    priority: props.priority,
   });
 
   createEffect(() => {
@@ -88,15 +71,16 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
     };
 
     try {
-      await fetch("http://localhost:8080/api/tasks", {
-        method: "POST",
+      await fetch(`http://localhost:8080/api/tasks/${props.id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
       props.setIsOpen(false);
-      AddedToast();
+      EditedToast();
+      reload();
     } catch (error) {
       // Handle error if needed
       console.error("Failed to submit:", error);
@@ -216,4 +200,4 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
   );
 };
 
-export default AddTaskDialog;
+export default EditTaskDialog;

@@ -8,7 +8,7 @@ import {
   For,
 } from "solid-js";
 import Task from "../components/Task";
-import AddTaskDialog from "../components/AddTask";
+import AddTaskDialog from "../components/modals/AddTask";
 import { IoAddCircleOutline } from "solid-icons/io";
 
 const fetchTasks = async () => {
