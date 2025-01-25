@@ -2,6 +2,7 @@ import { Component, createEffect, createSignal, Show } from "solid-js";
 import { AiOutlineCalendar } from "solid-icons/ai";
 import { BsThreeDotsVertical } from "solid-icons/bs";
 import EditTaskDialog from "./modals/EditTask";
+import DeleteTaskDialog from "./modals/DeleteTask";
 
 export type Priority = "low" | "medium" | "high";
 
@@ -21,6 +22,7 @@ const Task: Component<TaskProps> = (props) => {
   let buttonRef!: SVGSVGElement;
   const [menuOPen, setMenuOpen] = createSignal(false);
   const [editOpen, setEditOpen] = createSignal(false);
+  const [deleteOpen, setDeleteOpen] = createSignal(false);
   const formattedDate = date.toISOString().slice(0, 10);
   createEffect(() => {
     function handleClickOutside(event: MouseEvent): void {
@@ -47,7 +49,10 @@ const Task: Component<TaskProps> = (props) => {
       <Show when={editOpen()}>
         <EditTaskDialog setIsOpen={setEditOpen} {...props} />
       </Show>
-      <Show when={editOpen()}>
+      <Show when={deleteOpen()}>
+        <DeleteTaskDialog setIsOpen={setDeleteOpen} {...props} />
+      </Show>
+      <Show when={editOpen() || deleteOpen()}>
         <div
           class={`fixed top-0 left-0 w-full h-full bg-[rgb(0,0,0,0.5)] z-10 backdrop-blur`}
         />
@@ -92,7 +97,12 @@ const Task: Component<TaskProps> = (props) => {
             >
               Edit
             </li>
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Delete</li>
+            <li
+              class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={() => setDeleteOpen((p) => !p)}
+            >
+              Delete
+            </li>
             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Share</li>
           </ul>
         </div>
