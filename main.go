@@ -22,6 +22,16 @@ func (c *CustomFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/javascript")
 	case strings.HasSuffix(r.URL.Path, ".css"):
 		w.Header().Set("Content-Type", "text/css")
+	case strings.HasSuffix(r.URL.Path, ".html"):
+		w.Header().Set("Content-Type", "text/html")
+	case strings.HasSuffix(r.URL.Path, ".json"):
+		w.Header().Set("Content-Type", "application/json")
+	case strings.HasSuffix(r.URL.Path, ".png"):
+		w.Header().Set("Content-Type", "image/png")
+	case strings.HasSuffix(r.URL.Path, ".jpg"), strings.HasSuffix(r.URL.Path, ".jpeg"):
+		w.Header().Set("Content-Type", "image/jpeg")
+	case strings.HasSuffix(r.URL.Path, ".svg"):
+		w.Header().Set("Content-Type", "image/svg+xml")
 	}
 	c.handler.ServeHTTP(w, r)
 }
@@ -30,18 +40,19 @@ func main() {
 	if err := db.Connect(); err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
+
 	r := mux.NewRouter()
+
+	// Serve the frontend/dist directory directly
 	fs := http.FileServer(http.Dir("frontend/dist"))
-	// Wrap the file server with CustomFileServer to set MIME types
 	customFs := &CustomFileServer{handler: fs}
-	// Use PathPrefix to match all paths under "/static/" and strip the prefix
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", customFs))
-	r.HandleFunc("/", handlers.ClientHandler)
+
+	// API routes
 	r.HandleFunc("/api/tasks", handlers.TaskHandler)
 	r.HandleFunc("/api/tasks/{id}", handlers.TaskHandler)
-	// corsConfig := handlers.DefaultCORSConfig()
-	// corsConfig.AllowedOrigins = []string{"http://localhost:8080", "http://localhost:3000"}
-	// corsHandler := handlers.CORSMiddleware(corsConfig)
+
+	r.PathPrefix("/").Handler(customFs)
+
 	fmt.Println("Server running on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
