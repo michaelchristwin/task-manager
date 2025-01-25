@@ -70,7 +70,7 @@ const EditTaskDialog: Component<EditTaskDialogProps> = (props) => {
     };
 
     try {
-      await fetch(`http://localhost:8080/api/tasks/${props.id}`, {
+      await fetch(`/api/tasks/${props.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +106,7 @@ const EditTaskDialog: Component<EditTaskDialogProps> = (props) => {
           class={`w-[80%] space-y-4 mt-[80px]`}
           onsubmit={handleSubmit}
         >
-          <h2 class={`text-[25px] font-bold text-primary`}>Add Task</h2>
+          <h2 class={`text-[25px] font-bold text-primary`}>Edit Task</h2>
           <fieldset class={`space-y-1 w-full`}>
             <label for="title">Title</label>
             <input

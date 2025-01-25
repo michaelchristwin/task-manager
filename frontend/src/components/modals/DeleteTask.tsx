@@ -1,7 +1,7 @@
 import { AiFillCloseCircle } from "solid-icons/ai";
 import { ImSpinner2 } from "solid-icons/im";
 import { Component, createEffect, createSignal, For, Setter } from "solid-js";
-import { AddedToast } from "~/components/custom.toasts";
+import { DeletedToast } from "~/components/custom.toasts";
 
 interface AddTaskDialogProps {
   setIsOpen: Setter<boolean>;
@@ -9,7 +9,7 @@ interface AddTaskDialogProps {
   id: string;
 }
 
-//Add Task Component
+//Delete Task Component
 const DeleteTaskDialog: Component<AddTaskDialogProps> = (props) => {
   const closeModal = () => props.setIsOpen(false);
 
@@ -29,14 +29,15 @@ const DeleteTaskDialog: Component<AddTaskDialogProps> = (props) => {
     setIsLoading(true); // Set loading to true when starting
 
     try {
-      await fetch(`http://localhost:8080/api/tasks/${props.id}`, {
+      await fetch(`/api/tasks/${props.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
       });
       props.setIsOpen(false);
-      AddedToast();
+      DeletedToast();
+      props.refetch();
     } catch (error) {
       // Handle error if needed
       console.error("Failed to submit:", error);
@@ -48,9 +49,9 @@ const DeleteTaskDialog: Component<AddTaskDialogProps> = (props) => {
   return (
     <div
       aria-label="modal"
-      class={`fixed top-[50%] z-20 right-[50%] translate-x-[50%] translate-y-[-50%] bg-neutral-800 lg:w-[500px] w-[300px] h-[250px] rounded p-5`}
+      class={`fixed top-[50%] z-20 right-[50%] translate-x-[50%] translate-y-[-50%] bg-neutral-800 lg:w-[500px] w-[300px] h-[250px] rounded py-3 px-[25px]`}
     >
-      <div class={`w-full h-full relative flex justify-center`}>
+      <div class={`w-full h-full relative flex justify-center p-3`}>
         <button
           aria-label="close modal"
           class={`rounded-full absolute top-[5px] right-[10px]`}
@@ -58,13 +59,14 @@ const DeleteTaskDialog: Component<AddTaskDialogProps> = (props) => {
         >
           <AiFillCloseCircle size={25} />
         </button>
-        <form class={`mt-[60px] space-y-[50px]`} onsubmit={handleSubmit}>
-          <p class={`text-[20px]`}>
+        <form class={`mt-[20px] space-y-7 w-full`} onsubmit={handleSubmit}>
+          <h2 class={`font-bold text-[21px] text-cente`}>Delete Task</h2>
+          <p class={`text-[17px]`}>
             Are you sure you want to delete this task?
           </p>
           <button
             type="submit"
-            class={`add-task-btn rounded-[8px] bg-red-500 text-white mx-auto p-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+            class={`add-task-btn rounded-[8px] bg-red-500 hover:opacity-[0.7] text-white mx-auto p-2 disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <span
               class={`add-task mx-auto ${

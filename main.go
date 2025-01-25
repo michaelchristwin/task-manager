@@ -32,15 +32,18 @@ func main() {
 	}
 	r := mux.NewRouter()
 	fs := http.FileServer(http.Dir("frontend/dist"))
-	r.Handle("/static/", http.StripPrefix("/static/", &CustomFileServer{fs}))
+	// Wrap the file server with CustomFileServer to set MIME types
+	customFs := &CustomFileServer{handler: fs}
+	// Use PathPrefix to match all paths under "/static/" and strip the prefix
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", customFs))
 	r.HandleFunc("/", handlers.ClientHandler)
 	r.HandleFunc("/api/tasks", handlers.TaskHandler)
 	r.HandleFunc("/api/tasks/{id}", handlers.TaskHandler)
-	corsConfig := handlers.DefaultCORSConfig()
-	corsConfig.AllowedOrigins = []string{"http://localhost:8080", "http://localhost:3000"}
-	corsHandler := handlers.CORSMiddleware(corsConfig)
+	// corsConfig := handlers.DefaultCORSConfig()
+	// corsConfig.AllowedOrigins = []string{"http://localhost:8080", "http://localhost:3000"}
+	// corsHandler := handlers.CORSMiddleware(corsConfig)
 	fmt.Println("Server running on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", corsHandler(r)); err != nil {
+	if err := http.ListenAndServe(":8080", r); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }

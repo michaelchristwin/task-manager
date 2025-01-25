@@ -70,7 +70,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
     };
 
     try {
-      await fetch("http://localhost:8080/api/tasks", {
+      await fetch("/api/tasks", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
