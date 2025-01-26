@@ -44,7 +44,7 @@ const Tasks: Component = () => {
           <span>Add Task</span>
         </button>
       </div>
-
+      {/* Add shadow loading here later */}
       <div
         class={`lg:w-[900px] md:w-[600px] w-full bg-[#292a2d] h-[600px] mx-auto mt-[70px] rounded-lg shadow-lg p-3 divide-y divide-white/5`}
       >

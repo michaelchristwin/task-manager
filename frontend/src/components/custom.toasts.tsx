@@ -36,10 +36,10 @@ const EditedToast = () => {
         <div class="p-2">
           <div class="flex items-start">
             <div class="flex-shrink-0 pt-[2px] text-gray-600">
-              <AiOutlineCalendar size={20} class={`text-green-500`} />
+              <AiOutlineCalendar size={20} class={`text-yellow-500`} />
             </div>
             <div class="ml-3 w-0 flex-1 pt-0.5">
-              <p class="text-sm font-medium text-green-500">Task Edited</p>
+              <p class="text-sm font-medium text-yellow-500">Task Edited</p>
               <p class="mt-1 text-sm text-gray-500">Refreshing tasks</p>
             </div>
           </div>
@@ -60,7 +60,7 @@ const DeletedToast = () => {
         <div class="p-2">
           <div class="flex items-start">
             <div class="flex-shrink-0 pt-[2px] text-gray-600">
-              <AiOutlineCalendar size={20} class={`text-green-500`} />
+              <AiOutlineCalendar size={20} class={`text-red-500`} />
             </div>
             <div class="ml-3 w-0 flex-1 pt-0.5">
               <p class="text-sm font-medium text-red-500">Task Deleted</p>
