@@ -12,7 +12,7 @@ import AddTaskDialog from "~/components/modals/AddTask";
 import { IoAddCircleOutline } from "solid-icons/io";
 
 const fetchTasks = async () => {
-  const response = await fetch("/api/tasks");
+  const response = await fetch("http://localhost:8080/api/tasks");
   return response.json();
 };
 

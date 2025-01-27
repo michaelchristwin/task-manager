@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -52,9 +53,17 @@ func main() {
 	r.HandleFunc("/api/tasks/{id}", handlers.TaskHandler)
 
 	r.PathPrefix("/").Handler(customFs)
-
+	corsConfig := handlers.DefaultCORSConfig()
+	if os.Getenv("ENV") == "production" {
+		// In production, allow only the same origin
+		corsConfig.AllowedOrigins = []string{"http://localhost:8080"}
+	} else {
+		// In development, allow localhost:3000
+		corsConfig.AllowedOrigins = []string{"http://localhost:3000"}
+	}
+	handlerWithCORS := handlers.CORSMiddleware(corsConfig)(r)
 	fmt.Println("Server running on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := http.ListenAndServe(":8080", handlerWithCORS); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }

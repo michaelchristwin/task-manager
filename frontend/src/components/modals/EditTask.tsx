@@ -70,7 +70,7 @@ const EditTaskDialog: Component<EditTaskDialogProps> = (props) => {
     };
 
     try {
-      await fetch(`/api/tasks/${props.id}`, {
+      await fetch(`http://localhost:8080/api/tasks/${props.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
