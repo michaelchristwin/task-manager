@@ -7,7 +7,7 @@ import timezone from "dayjs/plugin/timezone";
 import { Priority, TaskProps } from "~/components/Task";
 import { EditedToast } from "~/components/custom.toasts";
 import { capitalize, areAllPropertiesTruthy } from "~/utils";
-import { getApiURL } from "./AddTask";
+import { getApiURL } from "~/utils";
 
 interface EditTaskDialogProps extends TaskProps {
   setIsOpen: Setter<boolean>;

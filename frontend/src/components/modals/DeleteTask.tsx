@@ -2,7 +2,7 @@ import { AiFillCloseCircle } from "solid-icons/ai";
 import { ImSpinner2 } from "solid-icons/im";
 import { Component, createEffect, createSignal, Setter } from "solid-js";
 import { DeletedToast } from "~/components/custom.toasts";
-import { getApiURL } from "./AddTask";
+import { getApiURL } from "~/utils";
 
 interface AddTaskDialogProps {
   setIsOpen: Setter<boolean>;

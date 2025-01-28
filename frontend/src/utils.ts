@@ -17,4 +17,14 @@ function areAllPropertiesTruthy(obj: { [key: string]: any }): boolean {
   return true;
 }
 
-export { capitalize, areAllPropertiesTruthy };
+const getApiURL = () => {
+  if (import.meta.env.VITE_ENVIRONMENT === "development") {
+    return "http://localhost:8080/api/tasks";
+  } else if (import.meta.env.VITE_ENVIRONMENT === "production") {
+    return "/api/tasks";
+  } else {
+    return "";
+  }
+};
+
+export { capitalize, areAllPropertiesTruthy, getApiURL };

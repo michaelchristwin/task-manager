@@ -8,8 +8,9 @@ import {
   For,
 } from "solid-js";
 import Task from "../components/Task";
-import AddTaskDialog, { getApiURL } from "~/components/modals/AddTask";
+import AddTaskDialog from "~/components/modals/AddTask";
 import { IoAddCircleOutline } from "solid-icons/io";
+import { getApiURL } from "~/utils";
 
 const fetchTasks = async () => {
   const response = await fetch(getApiURL());
@@ -19,7 +20,6 @@ const fetchTasks = async () => {
 const Tasks: Component = () => {
   const [isOpen, setIsOpen] = createSignal(false);
   const [tasks, { refetch }] = createResource(fetchTasks);
-  console.log(tasks());
 
   return (
     <div class={`w-full relative`}>

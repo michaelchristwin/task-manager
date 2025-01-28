@@ -6,17 +6,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { Priority } from "../Task";
 import { AddedToast } from "~/components/custom.toasts";
-import { capitalize, areAllPropertiesTruthy } from "~/utils";
-
-export const getApiURL = () => {
-  if (import.meta.env.VITE_ENVIRONMENT === "development") {
-    return "http://localhost:8080/api/tasks";
-  } else if (import.meta.env.VITE_ENVIRONMENT === "production") {
-    return "/api/tasks";
-  } else {
-    return "";
-  }
-};
+import { capitalize, areAllPropertiesTruthy, getApiURL } from "~/utils";
 
 interface AddTaskDialogProps {
   setIsOpen: Setter<boolean>;
