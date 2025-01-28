@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/michaelchristwin/taskmanager/db"
 	"github.com/michaelchristwin/taskmanager/handlers"
 )
@@ -37,7 +38,16 @@ func (c *CustomFileServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c.handler.ServeHTTP(w, r)
 }
 
+func loadEnv() {
+	// Load .env file if it exists
+	if err := godotenv.Load(); err != nil {
+		log.Printf("No .env file found or error loading it: %v", err)
+		// Continue execution - we'll use os.Getenv which will check system environment variables
+	}
+}
+
 func main() {
+	loadEnv()
 	if err := db.Connect(); err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
