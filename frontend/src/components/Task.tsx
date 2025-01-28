@@ -63,20 +63,22 @@ const Task: Component<TaskProps> = (props) => {
         id="task"
         class={`w-[20px] h-[20px] outline-none border border-gray-300 rounded-full`}
       />
-      <div class={`flex flex-col`}>
+      <div class={`flex flex-col w-[200px]`}>
         <p class={`text-[19px] text-primary font-[600]`}>{props.title}</p>
         <p class={`text-[13px]`}>{props.description}</p>
       </div>
-      <div class={`flex items-center space-x-2`}>
+      <div class={`flex items-center space-x-2 w-[120px] justify-center`}>
         <AiOutlineCalendar size={20} />
         <p class={`text-[16px]`}>{formattedDate}</p>
       </div>
-      <div
-        class={`w-fit px-[15px] h-[30px] text-[14px] rounded-full border flex justify-center items-center ${
-          priorityColors[props.priority]
-        }`}
-      >
-        {props.priority}
+      <div class={`w-[110px] flex justify-center items-center`}>
+        <div
+          class={`w-fit px-[15px] h-[30px] text-[14px] rounded-full border flex justify-center items-center ${
+            priorityColors[props.priority]
+          }`}
+        >
+          {props.priority}
+        </div>
       </div>
       <BsThreeDotsVertical
         ref={buttonRef}
