@@ -2,6 +2,7 @@ import { AiFillCloseCircle } from "solid-icons/ai";
 import { ImSpinner2 } from "solid-icons/im";
 import { Component, createEffect, createSignal, Setter } from "solid-js";
 import { DeletedToast } from "~/components/custom.toasts";
+import { getApiURL } from "./AddTask";
 
 interface AddTaskDialogProps {
   setIsOpen: Setter<boolean>;
@@ -29,7 +30,7 @@ const DeleteTaskDialog: Component<AddTaskDialogProps> = (props) => {
     setIsLoading(true); // Set loading to true when starting
 
     try {
-      await fetch(`http://localhost:8080/api/tasks/${props.id}`, {
+      await fetch(`${getApiURL()}/${props.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

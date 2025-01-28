@@ -8,6 +8,16 @@ import { Priority } from "../Task";
 import { AddedToast } from "~/components/custom.toasts";
 import { capitalize, areAllPropertiesTruthy } from "~/utils";
 
+export const getApiURL = () => {
+  if (import.meta.env.VITE_ENVIRONMENT === "development") {
+    return "http://localhost:8080/api/tasks";
+  } else if (import.meta.env.VITE_ENVIRONMENT === "production") {
+    return "/api/tasks";
+  } else {
+    return "";
+  }
+};
+
 interface AddTaskDialogProps {
   setIsOpen: Setter<boolean>;
   refetch: () => any;
@@ -70,7 +80,7 @@ const AddTaskDialog: Component<AddTaskDialogProps> = (props) => {
     };
 
     try {
-      await fetch("http://localhost:8080/api/tasks", {
+      await fetch(getApiURL(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

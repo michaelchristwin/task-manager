@@ -1,7 +1,3 @@
--- Connect to the database
-\c task_manager_db
-
--- Check if the tasks and users tables exist before creating them
 DO $$
 BEGIN
     -- Check if the tasks table exists
@@ -58,7 +54,6 @@ BEGIN
 
         -- Create index for common queries on users table
         CREATE INDEX idx_users_email ON users(email);
-       
 
         -- Add comments to the users table
         COMMENT ON TABLE users IS 'Stores user information for the task manager application';
@@ -69,37 +64,27 @@ BEGIN
     ELSE
         RAISE NOTICE 'Users table already exists. Skipping creation.';
     END IF;
-
-    -- Create function to automatically update the updated_at timestamp
-    CREATE OR REPLACE FUNCTION update_updated_at_column()
-    RETURNS TRIGGER AS $$
-    BEGIN
-        NEW.updated_at = CURRENT_TIMESTAMP;
-        RETURN NEW;
-    END;
-    $$ language 'plpgsql';
-
-    -- Create trigger to automatically update the updated_at timestamp for tasks table
-    IF NOT EXISTS (
-        SELECT 1
-        FROM pg_trigger
-        WHERE tgname = 'update_tasks_modtime'
-    ) THEN
-        CREATE TRIGGER update_tasks_modtime
-            BEFORE UPDATE ON tasks
-            FOR EACH ROW
-            EXECUTE FUNCTION update_updated_at_column();
-    END IF;
-
-    -- Create trigger to automatically update the updated_at timestamp for users table
-    IF NOT EXISTS (
-        SELECT 1
-        FROM pg_trigger
-        WHERE tgname = 'update_users_modtime'
-    ) THEN
-        CREATE TRIGGER update_users_modtime
-            BEFORE UPDATE ON users
-            FOR EACH ROW
-            EXECUTE FUNCTION update_updated_at_column();
-    END IF;
 END $$;
+
+-- Create function to automatically update the updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to automatically update the updated_at timestamp for tasks table
+DROP TRIGGER IF EXISTS update_tasks_modtime ON tasks;
+CREATE TRIGGER update_tasks_modtime
+    BEFORE UPDATE ON tasks
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Create trigger to automatically update the updated_at timestamp for users table
+DROP TRIGGER IF EXISTS update_users_modtime ON users;
+CREATE TRIGGER update_users_modtime
+    BEFORE UPDATE ON users
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();

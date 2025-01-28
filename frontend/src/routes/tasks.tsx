@@ -8,11 +8,11 @@ import {
   For,
 } from "solid-js";
 import Task from "../components/Task";
-import AddTaskDialog from "~/components/modals/AddTask";
+import AddTaskDialog, { getApiURL } from "~/components/modals/AddTask";
 import { IoAddCircleOutline } from "solid-icons/io";
 
 const fetchTasks = async () => {
-  const response = await fetch("http://localhost:8080/api/tasks");
+  const response = await fetch(getApiURL());
   return response.json();
 };
 

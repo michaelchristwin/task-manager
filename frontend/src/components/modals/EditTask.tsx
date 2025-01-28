@@ -7,6 +7,7 @@ import timezone from "dayjs/plugin/timezone";
 import { Priority, TaskProps } from "~/components/Task";
 import { EditedToast } from "~/components/custom.toasts";
 import { capitalize, areAllPropertiesTruthy } from "~/utils";
+import { getApiURL } from "./AddTask";
 
 interface EditTaskDialogProps extends TaskProps {
   setIsOpen: Setter<boolean>;
@@ -70,7 +71,7 @@ const EditTaskDialog: Component<EditTaskDialogProps> = (props) => {
     };
 
     try {
-      await fetch(`http://localhost:8080/api/tasks/${props.id}`, {
+      await fetch(`${getApiURL()}s/${props.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
