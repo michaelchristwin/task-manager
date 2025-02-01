@@ -3,6 +3,8 @@ import { AiOutlineCalendar } from "solid-icons/ai";
 import { BsThreeDotsVertical } from "solid-icons/bs";
 import EditTaskDialog from "./modals/EditTask";
 import DeleteTaskDialog from "./modals/DeleteTask";
+import { getApiURL } from "~/utils";
+import { EditedToast } from "./custom.toasts";
 
 export type Priority = "low" | "medium" | "high";
 
@@ -42,6 +44,36 @@ const Task: Component<TaskProps> = (props) => {
     medium: "border-yellow-500",
     high: "border-red-500",
   };
+
+  const handleCheck = async (e: MouseEvent) => {
+    e.preventDefault();
+
+    const data = {
+      title: props.title,
+      description: props.description,
+      due_date: props.due_date,
+      priority: props.priority,
+      completed: true,
+    };
+
+    try {
+      await fetch(`${getApiURL()}s/${props.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      EditedToast();
+      props.refetch();
+    } catch (error) {
+      // Handle error if needed
+      console.error("Failed to submit:", error);
+    } finally {
+    }
+  };
+
   return (
     <div
       class={`flex w-[85%] mx-auto justify-around space-x-4 items-center p-5 h-[100px] relative`}
@@ -59,8 +91,11 @@ const Task: Component<TaskProps> = (props) => {
       </Show>
       <input
         type="checkbox"
+        disabled={props.completed}
         name="task"
         id="task"
+        onclick={handleCheck}
+        checked={props.completed}
         class={`w-[20px] h-[20px] outline-none border border-gray-300 rounded-full`}
       />
       <div class={`flex flex-col w-[200px]`}>
