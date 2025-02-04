@@ -9,6 +9,7 @@ const Navbar: Component = () => {
       </A>
       <button
         type="button"
+        name="login button"
         class={`text-black w-[100px] h-[40px] flex justify-center items-center bg-white rounded-lg`}
       >
         Login
