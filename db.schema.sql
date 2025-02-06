@@ -1,39 +1,5 @@
 DO $$
 BEGIN
-    -- Check if the tasks table exists
-    IF NOT EXISTS (
-        SELECT 1
-        FROM information_schema.tables
-        WHERE table_schema = 'public'
-        AND table_name = 'tasks'
-    ) THEN
-        -- Create tasks table
-        CREATE TABLE tasks (
-            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            title VARCHAR(255) NOT NULL,
-            description TEXT,
-            due_date TIMESTAMP WITH TIME ZONE,
-            priority VARCHAR(20) CHECK (priority IN ('low', 'medium', 'high')),
-            completed BOOLEAN DEFAULT FALSE,
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-        );
-
-        -- Create index for common queries on tasks table
-        CREATE INDEX idx_tasks_due_date ON tasks(due_date);
-        CREATE INDEX idx_tasks_priority ON tasks(priority);
-        CREATE INDEX idx_tasks_completed ON tasks(completed);
-
-        -- Add comments to the tasks table
-        COMMENT ON TABLE tasks IS 'Stores task information for the task manager application';
-        COMMENT ON COLUMN tasks.id IS 'Unique identifier for the task';
-        COMMENT ON COLUMN tasks.priority IS 'Task priority level (low, medium, high)';
-
-        RAISE NOTICE 'Tasks table created successfully.';
-    ELSE
-        RAISE NOTICE 'Tasks table already exists. Skipping creation.';
-    END IF;
-
     -- Check if the users table exists
     IF NOT EXISTS (
         SELECT 1
@@ -63,6 +29,42 @@ BEGIN
         RAISE NOTICE 'Users table created successfully.';
     ELSE
         RAISE NOTICE 'Users table already exists. Skipping creation.';
+    END IF;
+
+    -- Check if the tasks table exists
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'tasks'
+    ) THEN
+        -- Create tasks table
+        CREATE TABLE tasks (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            title VARCHAR(255) NOT NULL,
+            description TEXT,
+            due_date TIMESTAMP WITH TIME ZONE,
+            priority VARCHAR(20) CHECK (priority IN ('low', 'medium', 'high')),
+            completed BOOLEAN DEFAULT FALSE,
+            user_id UUID NOT NULL,     -- Foreign key to associate task with user
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+
+        -- Create index for common queries on tasks table
+        CREATE INDEX idx_tasks_due_date ON tasks(due_date);
+        CREATE INDEX idx_tasks_priority ON tasks(priority);
+        CREATE INDEX idx_tasks_completed ON tasks(completed);
+
+        -- Add comments to the tasks table
+        COMMENT ON TABLE tasks IS 'Stores task information for the task manager application';
+        COMMENT ON COLUMN tasks.id IS 'Unique identifier for the task';
+        COMMENT ON COLUMN tasks.priority IS 'Task priority level (low, medium, high)';
+
+        RAISE NOTICE 'Tasks table created successfully.';
+    ELSE
+        RAISE NOTICE 'Tasks table already exists. Skipping creation.';
     END IF;
 END $$;
 
