@@ -61,6 +61,8 @@ func main() {
 	// API routes
 	r.HandleFunc("/api/tasks", handlers.TaskHandler)
 	r.HandleFunc("/api/tasks/{id}", handlers.TaskHandler)
+	r.HandleFunc("/api/signup", handlers.Signup)
+	// r.HandleFunc("/api/login", handlers)
 
 	r.PathPrefix("/").Handler(customFs)
 	if os.Getenv("ENV") == "production" {
