@@ -25,6 +25,14 @@ const routes = [
     path: "/tasks",
     component: lazy(() => import("./routes/tasks")),
   },
+  {
+    path: "/login",
+    component: lazy(() => import("~/routes/login")),
+  },
+  {
+    path: "/signup",
+    component: lazy(() => import("~/routes/signup")),
+  },
 ];
 const root = document.getElementById("root");
 

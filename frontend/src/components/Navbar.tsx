@@ -7,13 +7,13 @@ const Navbar: Component = () => {
       <A href="/" class={"text-primary font-[700] text-[25px]"}>
         ☯
       </A>
-      <button
+      {/* <A
         type="button"
-        name="login button"
+        href="/signup"
         class={`text-black w-[100px] h-[40px] flex justify-center items-center bg-white rounded-lg`}
       >
-        Login
-      </button>
+        Sign Up
+      </A> */}
     </nav>
   );
 };

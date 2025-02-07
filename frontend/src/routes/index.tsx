@@ -24,11 +24,12 @@ const Index: Component = () => {
             <span>Try Now</span>
             <AiOutlineArrowRight size={20} />
           </A>
-          <button
+          <A
+            href="/signup"
             class={`bg-white w-[150px] hover:opacity-[0.9] h-[50px] flex justify-center items-center text-black rounded-md font-[400]`}
           >
             Sign Up
-          </button>
+          </A>
         </div>
       </div>
     </div>
