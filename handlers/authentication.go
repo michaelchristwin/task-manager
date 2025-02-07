@@ -46,8 +46,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	user.Password = string(hashedPassword)
 
 	query := `
-        INSERT INTO users (first_name, last_name, email, password, last_login)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO users (first_name, last_name, email, password)
+        VALUES ($1, $2, $3, $4)
         RETURNING id, created_at, updated_at;
     `
 	row := db.Db.QueryRow(r.Context(), query,
