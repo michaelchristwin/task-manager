@@ -21,6 +21,17 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type LoginUser struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginU struct {
+	ID             string `json:"id"`
+	Email          string `json:"email"`
+	HashedPassword string `json:"hashed_password"`
+}
+
 func Signup(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		log.Printf("Invalid request method")
@@ -70,6 +81,32 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Callback() {
-	fmt.Println("This is a callback")
+func Login(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		log.Printf("Invalid request method")
+		http.Error(w, "Invalid reuest method", http.StatusMethodNotAllowed)
+		return
+	}
+	var user LoginUser
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		log.Printf("Error decoding JSON: %v", err)
+		return
+	}
+	defer r.Body.Close()
+	query := "SELECT id, email, password FROM users WHERE email = $1"
+	var dbUser LoginU
+	row := db.Db.QueryRow(r.Context(), query, user.Email)
+	if err := row.Scan(&dbUser.ID, &dbUser.Email, &dbUser.HashedPassword); err != nil {
+		log.Printf("Failed to find task: %v", err)
+		http.Error(w, "Task not found", http.StatusNotFound)
+		return
+	}
+	err := bcrypt.CompareHashAndPassword([]byte(dbUser.HashedPassword), []byte(user.Password))
+	if err != nil {
+		http.Error(w, "Invalid password", http.StatusInternalServerError)
+		log.Printf("Invalid password: %v", err)
+		return
+	}
+	fmt.Println("lol")
 }

@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import { Component, createSignal } from "solid-js";
 import { getSignupURL } from "~/utils";
 
@@ -45,7 +46,7 @@ const Signup: Component = () => {
         class={`lg:w-[500px] md:w-[400px] w-[300px] borde border-white/5 rounded-[10px] p-2 space-y-2`}
       >
         <p class={`text-[30px] font-bold text-center`}>
-          Hello there👋, Sign Up here
+          Hello there👋, Sign up here
         </p>
         <form class={`w-full space-y-[30px]`} onSubmit={handleSubmit}>
           <div class={`w-full space-y-2`}>
@@ -56,7 +57,6 @@ const Signup: Component = () => {
               <input
                 id="first_name"
                 name="first_name"
-                type="text"
                 onChange={handleChange}
                 value={formState().first_name}
                 class={`w-full outline-none h-[50px] rounded text-white ps-2 bg-transparent border border-white/10`}
@@ -70,7 +70,6 @@ const Signup: Component = () => {
                 id="last_name"
                 name="last_name"
                 value={formState().last_name}
-                type="text"
                 onChange={handleChange}
                 class={`w-full outline-none h-[50px] rounded text-white ps-2 bg-transparent border border-white/10`}
               />
@@ -82,7 +81,7 @@ const Signup: Component = () => {
               <input
                 id="email"
                 name="email"
-                type="text"
+                type="email"
                 onChange={handleChange}
                 value={formState().email}
                 class={`w-full outline-none h-[50px] rounded text-white ps-2 bg-transparent border border-white/10`}
@@ -110,6 +109,12 @@ const Signup: Component = () => {
             Sign Up
           </button>
         </form>
+        <A
+          href="/login"
+          class={`mx-auto block w-fit text-[14px] hover:underline text-blue-600 cursor-pointer`}
+        >
+          Already have an account, login
+        </A>
       </div>
     </div>
   );
